@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  
+  <title itemprop="name">代码随想录Day15 | Azure&#39;s Home</title>
+  
+    <link rel="shortcut icon" href="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/mainicon.png">
+  
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+SerifMerriweather|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700|Noto+Serif+SC" media="all">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" id="saukra_css-css" href="/css/style.css" type="text/css" media="all">
+  <link rel="stylesheet" href="/css/lib.min.css" media="all">
+  <link rel="stylesheet" href="/css/font.css" media="all">
+  <link rel="stylesheet" href="/css/insight.css" media="all">
+  <link rel="stylesheet" href="/css/jquery.fancybox.min.css" media="all">
+  <link rel="stylesheet" href="/css/zoom.css" media="all">
+  <link rel="stylesheet" type="text/css" href="/css/sharejs.css">
+<!--   <link rel="stylesheet" id="saukra_css-css" href="https://2heng.xin/wp-content/cache/autoptimize/css/autoptimize_ad42a61f4c7d4bdd9f91afcff6b5dda5.css
+" type="text/css" media="all"> -->
+  <script>
+  /*Initial Variables*/
+  var mashiro_option = new Object();
+  var mashiro_global = new Object();
+  mashiro_option.NProgressON = true;
+  /* 
+   * 邮箱信息之类的东西可以填在这里，这些js变量基本都作用于sakura-app.js
+   * 这样的设置仅是为了方便在基于PHP开发的主题中设置js变量，既然移植到了Node上，我想或许可以精简这一逻辑吧
+   */
+  mashiro_option.email_domain = "";
+  mashiro_option.email_name = "";
+  mashiro_option.cookie_version_control = "";
+  mashiro_option.qzone_autocomplete = false;
+  mashiro_option.site_name = "Azure的小窝";
+  mashiro_option.author_name = "的小窝";
+  mashiro_option.site_url = "https://azuresword.github.io/";
+  mashiro_option.v_appId = "GyC3NzMvd0hT9Yyd2hYIC0MN-gzGzoHsz";
+  mashiro_option.v_appKey = "mgOpfzbkHYqU92CV4IDlAUHQ";
+  mashiro_option.mathjax = "1";
+  mashiro_option.qq_api_url = "https://api.mashiro.top/qqinfo/"; 
+  mashiro_option.qq_avatar_api_url = "https://api.mashiro.top/qqinfo/";
+
+  // mashiro_option.jsdelivr_css_src = "https://cdn.jsdelivr.net/gh/moezx/cdn@3.4.5/css/lib.min.css";
+  // mashiro_option.float_player_on = true;
+
+  /*End of Initial Variables*/
+  </script>
+  <script type="text/javascript">
+  var bg = "https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/genshin%20Yae%20miko2.png,https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/genshin%20Yae%20miko.png,https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/sence2.png,https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/scence1.png,https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/genshin%20Yae%20miko1.png".split(",");
+  var bgindex = Math.floor(Math.random()*bg.length);
+  if (!!window.ActiveXObject || "ActiveXObject" in window) { //is IE?
+    alert('朋友，IE浏览器未适配哦~');
+  }
+  </script>
+  <style type="text/css">
+  .hljs-ln{border-collapse:collapse}.hljs-ln td{padding:0}.hljs-ln-n:before{content:attr(data-line-number)}
+  </style>
+  <style type="text/css">.site-top .lower nav{display:block !important;}.author-profile i,.post-like a,.post-share .show-share,.sub-text,.we-info a,span.sitename,.post-more i:hover,#pagination a:hover,.post-content a:hover,.float-content i:hover{color:#FE9600}.feature i,.download,.navigator i:hover,.links ul li:before,.ar-time i,span.ar-circle,.object,.comment .comment-reply-link,.siren-checkbox-radio:checked + .siren-checkbox-radioInput:after{background:#FE9600}::-webkit-scrollbar-thumb{background:#FE9600}.download,.navigator i:hover,.link-title,.links ul li:hover,#pagination a:hover,.comment-respond input[type='submit']:hover{border-color:#FE9600}.entry-content a:hover,.site-info a:hover,.comment h4 a,#comments-navi a.prev,#comments-navi a.next,.comment h4 a:hover,.site-top ul li a:hover,.entry-title a:hover,#archives-temp h3,span.page-numbers.current,.sorry li a:hover,.site-title a:hover,i.iconfont.js-toggle-search.iconsearch:hover,.comment-respond input[type='submit']:hover{color:#FE9600}.comments .comments-main{display:block !important;}.comments .comments-hidden{display:none !important;}background-position:center center;background-attachment:inherit;}
+  </style>
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body class="page-template page-template-user page-template-page-analytics page-template-userpage-analytics-php page page-id-1297 chinese-font serif isWebKit">
+  <div class="scrollbar" id="bar">
+  </div>
+  <a href="#" class="cd-top faa-float animated"></a>
+  <section id="main-container">
+    <div class="headertop filter-dim">
+  <div id="banner_wave_1"></div>
+  <div id="banner_wave_2"></div>
+  <figure id="centerbg" class="centerbg">
+    <div class="focusinfo no-select">
+      <div class="header-tou">
+        <a target="_blank" rel="noopener" href="https://azuresword.github.io/">
+          <img src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/mainicon.png">
+        </a>
+      </div>
+      <div class="header-info">
+        <p>more happy more life Embrace each day with vigor and purpose ！</p>
+        <div class="top-social_v2">
+          <li id="bg-pre">
+            <img class="flipx" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/next-b.svg">
+          </li>
+          
+            
+              
+                <li>
+                  <a href="http://github.com/Azuresword" target="_blank" class="social-github" title="github">
+                    <img src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/github.svg">
+                  </a>
+                </li>
+              
+            
+              
+                <li class="wechat">
+                  <a href="/#">
+                    <img src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/%E5%BE%AE%E4%BF%A1.svg">
+                  </a>
+                  <div class="wechatInner">
+                    <img src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/qrcode.jpg">
+                  </div>
+                </li>
+              
+            
+          
+          <li id="bg-next">
+            <img src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/next-b.svg">
+          </li>
+        </div>
+      </div>
+    </div>
+  </figure>
+  <div id="video-container" style="">
+    <video style="object-fit: fill" id="bgvideo" class="video" video-name="" src="" width="auto" preload="auto">
+    </video>
+    <div id="video-btn" class="loadvideo videolive">
+    </div>
+    <div id="video-add">
+    </div>
+    <div class="video-stu">
+    </div>
+  </div>
+  <div class="headertop-down faa-float animated" onclick="headertop_down()">
+    <span>
+      <i class="fa fa-chevron-down" aria-hidden="true">
+      </i>
+    </span>
+  </div>
+</div>
+    <div id="page" class="site wrapper">
+      <header class="site-header no-select gizle sabit" role="banner">
+  <div class="site-top">
+    <div class="site-branding">
+      <span class="site-title">
+        <span class="logolink moe-mashiro">
+          <a href="/">
+            <span class="sakurasono">Azure</span>
+            <span class="shironeko">的小窝</span>
+          </a>
+        </span>
+      </span>
+    </div>
+    <div class="searchbox search-form-submit">
+      <i class="iconfont js-toggle-search iconsearch icon-search">
+      </i>
+    </div>
+    <div id="show-nav" class="showNav mobile-fit">
+      <div class="line line1">
+      </div>
+      <div class="line line2">
+      </div>
+      <div class="line line3">
+      </div>
+    </div>
+    <div class="lower-cantiner">
+      <div class="lower">
+        <nav class="mobile-fit-control hide">
+          <ul id="menu-new" class="menu">
+            
+              <li>
+                <a href="/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-fort-awesome faa-shake" aria-hidden="true"></i>
+                    首页
+                  </span>
+                </a>
+                
+              </li>
+            
+              <li>
+                <a href="/archives">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-archive faa-shake" aria-hidden="true"></i>
+                    归档
+                  </span>
+                </a>
+                
+                  <ul class="sub-menu">
+                    
+                      <li>
+                        <a href="/categories/%E6%8A%80%E6%9C%AF/">
+                          <i class="fa fa-code" aria-hidden="true"></i>
+                          技术
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/categories/%E7%94%9F%E6%B4%BB/">
+                          <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                          生活
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/categories/%E8%B5%84%E6%BA%90/">
+                          <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                          资源
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/categories/%E9%9A%8F%E6%83%B3/">
+                          <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                          随想
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/categories/%E8%BD%AC%E8%BD%BD/">
+                          <i class="fa fa-book" aria-hidden="true"></i>
+                          转载
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/categories/%E8%8B%B1%E8%AF%AD">
+                          <i class="fa fa-english" aria-hidden="true"></i>
+                          英语
+                        </a>
+                      </li>
+                    
+                  </ul>
+                
+              </li>
+            
+              <li>
+                <a href="javascript:;">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-list-ul faa-vertical" aria-hidden="true"></i>
+                    清单
+                  </span>
+                </a>
+                
+                  <ul class="sub-menu">
+                    
+                      <li>
+                        <a href="/tags/%E6%82%A6%E8%AF%BB/">
+                          <i class="fa fa-th-list faa-bounce" aria-hidden="true"></i>
+                          书单
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/bangumi/">
+                          <i class="fa fa-film faa-vertical" aria-hidden="true"></i>
+                          番组
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/music/">
+                          <i class="fa fa-headphones" aria-hidden="true"></i>
+                          歌单
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/tags/%E5%9B%BE%E9%9B%86/">
+                          <i class="fa fa-photo" aria-hidden="true"></i>
+                          图集
+                        </a>
+                      </li>
+                    
+                  </ul>
+                
+              </li>
+            
+              <li>
+                <a href="/comment/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-pencil-square-o faa-tada" aria-hidden="true"></i>
+                    留言板
+                  </span>
+                </a>
+                
+              </li>
+            
+              <li>
+                <a href="/links/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-link faa-shake" aria-hidden="true"></i>
+                    友人帐
+                  </span>
+                </a>
+                
+              </li>
+            
+              <li>
+                <a href="/donate/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-heart faa-pulse" aria-hidden="true"></i>
+                    赞赏
+                  </span>
+                </a>
+                
+              </li>
+            
+              <li>
+                <a href="/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-leaf faa-wrench" aria-hidden="true"></i>
+                    关于
+                  </span>
+                </a>
+                
+                  <ul class="sub-menu">
+                    
+                      <li>
+                        <a href="/about/">
+                          <i class="fa fa-meetup" aria-hidden="true"></i>
+                          我？
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/theme-sakura/">
+                          <i class="fa iconfont icon-sakura" aria-hidden="true"></i>
+                          主题
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/lab/">
+                          <i class="fa fa-cogs" aria-hidden="true"></i>
+                          Lab
+                        </a>
+                      </li>
+                    
+                  </ul>
+                
+              </li>
+            
+              <li>
+                <a href="/client/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-android faa-vertical" aria-hidden="true"></i>
+                    客户端
+                  </span>
+                </a>
+                
+              </li>
+            
+              <li>
+                <a href="/atom.xml">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-rss faa-pulse" aria-hidden="true"></i>
+                    RSS
+                  </span>
+                </a>
+                
+              </li>
+            
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <link rel="stylesheet" type="text/css" href="/css/sharejs.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css">
+<div class="pattern-center-blank"></div>
+
+<div id="content" class="site-content">
+  <div id="primary" class="content-area">
+    <main id="main" class="site-main" role="main">
+      <article id="post-1" class="post-1 post type-post status-publish format-standard has-post-thumbnail hentry category-uncategorized">
+        <div class="toc"></div>
+        <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
+        
+          <header class="entry-header">
+            <h1 class="entry-title">代码随想录Day15</h1>
+            <p class="entry-census">&nbsp;·&nbsp;2024-1-9&nbsp;·&nbsp;<span id="busuanzi_value_page_pv"></span>次阅读</p></p>
+
+            <hr>
+          </header>
+        
+        <div class="entry-content">
+          <h1 id="二叉树层序遍历"><a href="#二叉树层序遍历" class="headerlink" title="二叉树层序遍历"></a>二叉树层序遍历</h1><h2 id="102-二叉树的层序遍历"><a href="#102-二叉树的层序遍历" class="headerlink" title="102  二叉树的层序遍历"></a>102 <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/binary-tree-level-order-traversal/"> 二叉树的层序遍历</a></h2><h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>队列来实现每一层的存储和计数   每次出队的元素通过size控制，都是父节点的个数，然后再从父节点去访问底下的子节点最后实现子节点层序存储到vec里面，再把vec放到二维vec里</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">levelOrder</span>(TreeNode* root) &#123;</span><br><span class="line">        queue&lt;TreeNode*&gt; que;</span><br><span class="line">        <span class="keyword">if</span>(root!=<span class="literal">NULL</span>) que.<span class="built_in">push</span>(root);</span><br><span class="line">        vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; result;</span><br><span class="line">        <span class="keyword">while</span>(!que.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            <span class="type">int</span> size =que.<span class="built_in">size</span>();</span><br><span class="line">            vector&lt;<span class="type">int</span>&gt; vec;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;size;i++)&#123;</span><br><span class="line">                TreeNode *node =que.<span class="built_in">front</span>();</span><br><span class="line">                que.<span class="built_in">pop</span>();</span><br><span class="line">                vec.<span class="built_in">push_back</span>(node-&gt;val);</span><br><span class="line">                <span class="keyword">if</span>(node-&gt;left) que.<span class="built_in">push</span>(node-&gt;left);</span><br><span class="line">                <span class="keyword">if</span>(node-&gt;right) que.<span class="built_in">push</span>(node-&gt;right);</span><br><span class="line">            &#125;</span><br><span class="line">            result.<span class="built_in">push_back</span>(vec);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="107-二叉树的层序遍历-II"><a href="#107-二叉树的层序遍历-II" class="headerlink" title="107. 二叉树的层序遍历 II"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/binary-tree-level-order-traversal-ii/">107. 二叉树的层序遍历 II</a></h2><h3 id="思路-1"><a href="#思路-1" class="headerlink" title="思路"></a>思路</h3><p>层序遍历之后翻转一下即可</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">levelOrderBottom</span>(TreeNode* root) &#123;</span><br><span class="line">        queue&lt;TreeNode*&gt; que;</span><br><span class="line">        vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; result;</span><br><span class="line">        <span class="keyword">if</span>(root!=<span class="literal">NULL</span>)&#123;</span><br><span class="line">            que.<span class="built_in">push</span>(root);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span>(!que.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            <span class="type">int</span> size =que.<span class="built_in">size</span>();</span><br><span class="line">            TreeNode* cur=que.<span class="built_in">front</span>();</span><br><span class="line">            vector&lt;<span class="type">int</span>&gt; vec;</span><br><span class="line">            <span class="keyword">while</span>(size--)&#123;</span><br><span class="line">                cur=que.<span class="built_in">front</span>();</span><br><span class="line">                vec.<span class="built_in">push_back</span>(cur-&gt;val);</span><br><span class="line">                que.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="keyword">if</span>(cur-&gt;left) que.<span class="built_in">push</span>(cur-&gt;left);</span><br><span class="line">                <span class="keyword">if</span>(cur-&gt;right) que.<span class="built_in">push</span>(cur-&gt;right);</span><br><span class="line">            &#125;</span><br><span class="line">            result.<span class="built_in">push_back</span>(vec);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">reverse</span>(result.<span class="built_in">begin</span>(),result.<span class="built_in">end</span>());</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="199-二叉树的右视图"><a href="#199-二叉树的右视图" class="headerlink" title="199. 二叉树的右视图"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/binary-tree-right-side-view/">199. 二叉树的右视图</a></h2><h3 id="思路-2"><a href="#思路-2" class="headerlink" title="思路"></a>思路</h3><p>层序遍历，当队列的最后一个元素在处理时加入 结果</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">rightSideView</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        queue&lt;TreeNode*&gt; que;</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; result;</span><br><span class="line">        <span class="keyword">if</span>(root!=<span class="literal">NULL</span>) que.<span class="built_in">push</span>(root);</span><br><span class="line">        <span class="keyword">while</span>(!que.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            <span class="type">int</span> size =que.<span class="built_in">size</span>();</span><br><span class="line">            TreeNode* cur;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">while</span>(size--)&#123;</span><br><span class="line">                cur=que.<span class="built_in">front</span>();</span><br><span class="line">                que.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="keyword">if</span>(size==<span class="number">0</span>) result.<span class="built_in">push_back</span>(cur-&gt;val);</span><br><span class="line">                <span class="keyword">if</span>(cur-&gt;left) que.<span class="built_in">push</span>(cur-&gt;left);</span><br><span class="line">                <span class="keyword">if</span>(cur-&gt;right) que.<span class="built_in">push</span>(cur-&gt;right);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="637-二叉树的层平均值"><a href="#637-二叉树的层平均值" class="headerlink" title="637 二叉树的层平均值"></a>637<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/average-of-levels-in-binary-tree/"> 二叉树的层平均值</a></h2><p>处理平均值的精度时要保证所有的数据类型一致</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">calculateAverage</span><span class="params">(<span class="type">const</span> std::vector&lt;<span class="type">double</span>&gt;&amp; v)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (v.<span class="built_in">empty</span>()) <span class="keyword">return</span> <span class="number">0.0</span>; <span class="comment">// 防止除以0</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用 std::accumulate 来求和</span></span><br><span class="line">    <span class="type">double</span> sum = std::<span class="built_in">accumulate</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), <span class="number">0.0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 计算平均值</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">static_cast</span>&lt;<span class="type">double</span>&gt;(sum) / v.<span class="built_in">size</span>();</span><br><span class="line">&#125; </span><br><span class="line">    <span class="function">vector&lt;<span class="type">double</span>&gt; <span class="title">averageOfLevels</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        queue&lt;TreeNode*&gt; que;</span><br><span class="line">        vector&lt;<span class="type">double</span>&gt; result;</span><br><span class="line">        <span class="type">double</span> sum;</span><br><span class="line">        <span class="keyword">if</span>(root!=<span class="literal">NULL</span>) que.<span class="built_in">push</span>(root);</span><br><span class="line">        <span class="keyword">while</span>(!que.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            TreeNode * cur;</span><br><span class="line">            vector&lt;<span class="type">double</span>&gt; vec;</span><br><span class="line">            <span class="type">int</span> size = que.<span class="built_in">size</span>();</span><br><span class="line">            <span class="type">int</span> q_size=size;</span><br><span class="line">            <span class="keyword">while</span>(size--)&#123;</span><br><span class="line">                cur=que.<span class="built_in">front</span>();</span><br><span class="line">                vec.<span class="built_in">push_back</span>(cur-&gt;val);</span><br><span class="line">                que.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="keyword">if</span>(cur-&gt;left) que.<span class="built_in">push</span>(cur-&gt;left);</span><br><span class="line">                <span class="keyword">if</span>(cur-&gt;right) que.<span class="built_in">push</span>(cur-&gt;right);</span><br><span class="line">                </span><br><span class="line">            &#125;</span><br><span class="line">            sum =<span class="built_in">calculateAverage</span>(vec);</span><br><span class="line">            result.<span class="built_in">push_back</span>(sum);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="429-N-叉树的层序遍历"><a href="#429-N-叉树的层序遍历" class="headerlink" title="429. N 叉树的层序遍历"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/n-ary-tree-level-order-traversal/">429. N 叉树的层序遍历</a></h2><h3 id="思路-3"><a href="#思路-3" class="headerlink" title="思路"></a>思路</h3><p>遍历次数增多一个循环访问节点  访问一下所有的children节点</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">levelOrder</span>(Node* root) &#123;</span><br><span class="line">        queue&lt;Node*&gt; que;</span><br><span class="line">        <span class="keyword">if</span>(root!=<span class="literal">NULL</span>) que.<span class="built_in">push</span>(root);</span><br><span class="line">        vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; result;</span><br><span class="line">        <span class="keyword">while</span>(!que.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            <span class="type">int</span> size=que.<span class="built_in">size</span>();</span><br><span class="line">            vector&lt;<span class="type">int</span>&gt; vec;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;size;i++)&#123;</span><br><span class="line">                Node * node =que.<span class="built_in">front</span>();</span><br><span class="line">                que.<span class="built_in">pop</span>();</span><br><span class="line">                vec.<span class="built_in">push_back</span>(node-&gt;val);</span><br><span class="line">                <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;node-&gt;children.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">                    <span class="keyword">if</span>(node-&gt;children[i])que.<span class="built_in">push</span>(node -&gt;children[i]);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            result.<span class="built_in">push_back</span>(vec);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="116-填充每个节点的下一个右侧节点指针"><a href="#116-填充每个节点的下一个右侧节点指针" class="headerlink" title="116 填充每个节点的下一个右侧节点指针"></a>116 <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/populating-next-right-pointers-in-each-node/">填充每个节点的下一个右侧节点指针</a></h2><h3 id="思路-4"><a href="#思路-4" class="headerlink" title="思路"></a>思路</h3><p>正常进行层序遍历，每次提前保存上一个节点的位置直到size-1的位置就不保存了。</p>
+<ul>
+<li>错误记录： 每一层的最后一个节点处理有问题，最后一个节点访问了空的位置。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Node* <span class="title">connect</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        queue&lt;Node*&gt; que;</span><br><span class="line">        vector &lt;Node *&gt; vec;</span><br><span class="line">        <span class="keyword">if</span>(root!=<span class="literal">NULL</span>) que.<span class="built_in">push</span>(root);</span><br><span class="line">        <span class="keyword">while</span>(!que.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            <span class="type">int</span> size =que.<span class="built_in">size</span>();</span><br><span class="line">            <span class="keyword">while</span>(size --)&#123;</span><br><span class="line">                Node * cur;</span><br><span class="line">                cur =que.<span class="built_in">front</span>();</span><br><span class="line">                que.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="keyword">if</span>(!que.<span class="built_in">empty</span>())&#123;cur-&gt;next=que.<span class="built_in">front</span>();&#125;</span><br><span class="line">				<span class="keyword">if</span> (cur-&gt;left) que.<span class="built_in">push</span>(cur-&gt;left);</span><br><span class="line">                <span class="keyword">if</span> (cur-&gt;right) que.<span class="built_in">push</span>(cur-&gt;right);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>正确 -直接用计数器解决即可</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Node* <span class="title">connect</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        queue&lt;Node*&gt; que;</span><br><span class="line">        vector &lt;Node *&gt; vec;</span><br><span class="line">        <span class="keyword">if</span>(root!=<span class="literal">NULL</span>) que.<span class="built_in">push</span>(root);</span><br><span class="line">        <span class="keyword">while</span>(!que.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            <span class="type">int</span> size =que.<span class="built_in">size</span>();</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;size;i++)&#123;</span><br><span class="line">                Node * cur;</span><br><span class="line">                cur =que.<span class="built_in">front</span>();</span><br><span class="line">                que.<span class="built_in">pop</span>();</span><br><span class="line">               <span class="keyword">if</span>(i&lt;size<span class="number">-1</span>)&#123;cur-&gt;next=que.<span class="built_in">front</span>();&#125;</span><br><span class="line">                <span class="keyword">if</span> (cur-&gt;left) que.<span class="built_in">push</span>(cur-&gt;left);</span><br><span class="line">                <span class="keyword">if</span> (cur-&gt;right) que.<span class="built_in">push</span>(cur-&gt;right);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="104-二叉树的最大深度"><a href="#104-二叉树的最大深度" class="headerlink" title="104. 二叉树的最大深度"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/maximum-depth-of-binary-tree/">104. 二叉树的最大深度</a></h2><h3 id="思路-5"><a href="#思路-5" class="headerlink" title="思路"></a>思路</h3><p>层序遍历模板题，全部的层用队列刷一遍计数器计算即可</p>
+<h3 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">maxDepth</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        queue&lt;TreeNode*&gt; que;</span><br><span class="line">        <span class="keyword">if</span>(root ==<span class="literal">NULL</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> dep =<span class="number">0</span>;</span><br><span class="line">        que.<span class="built_in">push</span>(root);</span><br><span class="line">        <span class="keyword">while</span>(!que.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            TreeNode* cur=root;</span><br><span class="line">            <span class="type">int</span> size =que.<span class="built_in">size</span>();</span><br><span class="line">            dep++;</span><br><span class="line">            <span class="keyword">while</span>(size--)&#123;</span><br><span class="line">                cur=que.<span class="built_in">front</span>();</span><br><span class="line">                que.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="keyword">if</span> (cur-&gt;left) que.<span class="built_in">push</span>(cur-&gt;left);</span><br><span class="line">                <span class="keyword">if</span> (cur-&gt;right) que.<span class="built_in">push</span>(cur-&gt;right);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dep;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="111-二叉树的最小深度"><a href="#111-二叉树的最小深度" class="headerlink" title="111. 二叉树的最小深度"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-depth-of-binary-tree/">111. 二叉树的最小深度</a></h2><h3 id="思路-6"><a href="#思路-6" class="headerlink" title="思路"></a>思路</h3><p>层序遍历二叉树，第一个遇到的没有左右孩子的节点即为最浅层的节点返回深度即可</p>
+<p>在104基础上加一行代码</p>
+<h3 id="代码-2"><a href="#代码-2" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">minDepth</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">queue&lt;TreeNode*&gt; que;</span><br><span class="line">        <span class="keyword">if</span>(root ==<span class="literal">NULL</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> dep =<span class="number">0</span>;</span><br><span class="line">        que.<span class="built_in">push</span>(root);</span><br><span class="line">        <span class="keyword">while</span>(!que.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            TreeNode* cur=root;</span><br><span class="line">            <span class="type">int</span> size =que.<span class="built_in">size</span>();</span><br><span class="line">            dep++;</span><br><span class="line">            <span class="keyword">while</span>(size--)&#123;</span><br><span class="line">                cur=que.<span class="built_in">front</span>();</span><br><span class="line">                que.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="keyword">if</span> (cur-&gt;left) que.<span class="built_in">push</span>(cur-&gt;left);</span><br><span class="line">                <span class="keyword">if</span> (cur-&gt;right) que.<span class="built_in">push</span>(cur-&gt;right);</span><br><span class="line">                <span class="keyword">if</span>(cur-&gt;left==<span class="literal">NULL</span>&amp;&amp;cur-&gt;right==<span class="literal">NULL</span>) <span class="keyword">return</span> dep;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dep;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="层序遍历小总结"><a href="#层序遍历小总结" class="headerlink" title="层序遍历小总结"></a>层序遍历小总结</h2><p>美滋滋  刷的很爽</p>
+<h2 id="翻转二叉树"><a href="#翻转二叉树" class="headerlink" title="翻转二叉树"></a>翻转二叉树</h2><h3 id="经典题目"><a href="#经典题目" class="headerlink" title="经典题目"></a>经典题目</h3><p>层序  ，先序，后序，都可以实现</p>
+<p>先用层序做一下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">TreeNode* <span class="title">invertTree</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        queue&lt;TreeNode *&gt; que;</span><br><span class="line">        <span class="keyword">if</span>(root!=<span class="literal">NULL</span>) que.<span class="built_in">push</span>(root);</span><br><span class="line">        <span class="keyword">while</span>(!que.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            TreeNode * cur;</span><br><span class="line"></span><br><span class="line">            <span class="type">int</span> size =que.<span class="built_in">size</span>();</span><br><span class="line">            <span class="keyword">while</span>(size--)&#123;</span><br><span class="line">                cur=que.<span class="built_in">front</span>();</span><br><span class="line">                que.<span class="built_in">pop</span>();</span><br><span class="line">                <span class="built_in">swap</span>(cur-&gt;left,cur-&gt;right);</span><br><span class="line">                <span class="keyword">if</span>(cur-&gt;left)que.<span class="built_in">push</span>(cur-&gt;left);</span><br><span class="line">                <span class="keyword">if</span>(cur-&gt;right)que.<span class="built_in">push</span>(cur-&gt;right);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>前序递归</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">TreeNode* <span class="title">reverse</span><span class="params">(TreeNode * root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(root==<span class="literal">NULL</span>)    <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">swap</span>(root-&gt;left, root-&gt;right);</span><br><span class="line">        <span class="built_in">reverse</span>(root-&gt;left);</span><br><span class="line">        <span class="built_in">reverse</span>(root-&gt;right);</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">TreeNode* <span class="title">invertTree</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">reverse</span>(root);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="对称二叉树的判定"><a href="#对称二叉树的判定" class="headerlink" title="对称二叉树的判定"></a>对称二叉树的判定</h2><h3 id="思路-7"><a href="#思路-7" class="headerlink" title="思路"></a>思路</h3><h3 id="代码-3"><a href="#代码-3" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">compare</span><span class="params">(TreeNode* left, TreeNode* right)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 首先排除空节点的情况</span></span><br><span class="line">        <span class="keyword">if</span> (left == <span class="literal">NULL</span> &amp;&amp; right != <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (left != <span class="literal">NULL</span> &amp;&amp; right == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (left == <span class="literal">NULL</span> &amp;&amp; right == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="comment">// 排除了空节点，再排除数值不相同的情况</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (left-&gt;val != right-&gt;val) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 此时就是：左右节点都不为空，且数值相同的情况</span></span><br><span class="line">        <span class="comment">// 此时才做递归，做下一层的判断</span></span><br><span class="line">        <span class="type">bool</span> outside = <span class="built_in">compare</span>(left-&gt;left, right-&gt;right);   <span class="comment">// 左子树：左、 右子树：右</span></span><br><span class="line">        <span class="type">bool</span> inside = <span class="built_in">compare</span>(left-&gt;right, right-&gt;left);    <span class="comment">// 左子树：右、 右子树：左</span></span><br><span class="line">        <span class="type">bool</span> isSame = outside &amp;&amp; inside;                    <span class="comment">// 左子树：中、 右子树：中 （逻辑处理）</span></span><br><span class="line">        <span class="keyword">return</span> isSame;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isSymmetric</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">compare</span>(root-&gt;left, root-&gt;right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+
+        </div>
+        <!-- .entry-content -->
+        <div class="single-reward">
+          <div class="reward-open">赏
+            <div class="reward-main">
+              <ul class="reward-row">
+                <li class="alipay-code"><img src="/img/custom/donate/AliPayQR.jpg"></li>
+                <li class="wechat-code"><img src="/img/custom/donate/WeChanQR.jpg"></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; width: 100%" class="social-share share-mobile" data-disabled="diandian, tencent"></div>
+        <footer class="post-footer">
+          <div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> 知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a></div>
+          <div class="post-tags">
+          </div>
+          <div class="post-share">
+            <div class="social-share sharehidden share-component"></div>
+            <i class="iconfont show-share icon-forward"></i>
+          </div>
+        </footer><!-- .entry-footer -->
+      </article>
+      <!-- #post-## -->
+      <div class="toc" style="background: none;"></div>
+      <section class="post-squares nextprev">
+        
+          
+            <div class="post-nepre half previous">
+          
+            <a href="/2024/01/16/%E4%BB%A3%E7%A0%81%E9%9A%8F%E6%83%B3%E5%BD%95Day16/" rel="prev">
+              <div class="background">
+                <img class="lazyload" src="" data-src="" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="">
+              </div>
+              <span class="label">
+              Previous Post</span>
+              <div class="info">
+                <h3>
+                代码随想录Day16</h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
+        
+          
+            <div class="post-nepre half next">
+          
+            <a href="/2024/01/09/%E4%BB%A3%E7%A0%81%E9%9A%8F%E6%83%B3%E5%BD%95Day14/" rel="next">
+              <div class="background">
+                <img class="lazyload" src="" data-src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/v2-7212aebdb7ed425fcc7ff1ecea9e839f_r.jpg" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/v2-7212aebdb7ed425fcc7ff1ecea9e839f_r.jpg">
+              </div>
+              <span class="label">
+              Next Post</span>
+              <div class="info">
+                <h3>
+                代码随想录Day14</h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
+      </section>
+      
+<div id="vcomments"></div>
+<script>
+  window.onload = function(){
+      var valine = new Valine();
+      valine.init({
+        el: '#vcomments',
+        appId: "GyC3NzMvd0hT9Yyd2hYIC0MN-gzGzoHsz",
+        appKey: "mgOpfzbkHYqU92CV4IDlAUHQ",
+        path: window.location.pathname,
+        placeholder: "你是我一生只会遇见一次的惊喜 ..."
+      })
+  }
+</script>
+
+
+
+
+      <section class="author-profile">
+        <div class="info" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
+          <a href="" class="profile gravatar"><img src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/mainicon.png" itemprop="image" alt="" height="70" width="70"></a>
+          <div class="meta">
+            <span class="title">Author</span>
+            <h3 itemprop="name">
+            <a href="" itemprop="url" rel="author"></a>
+            </h3>
+          </div>
+        </div>
+        <hr>
+        <p><i class="iconfont icon-write"></i></p>
+      </section>
+    </main><!-- #main -->
+  </div><!-- #primary -->
+</div>
+
+
+
+    </div>    
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..."/>
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            // PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+    <!-- <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2024 Dylan<br>
+      powered_by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer> -->
+<footer id="colophon" class="site-footer" role="contentinfo">
+  <div class="site-info">
+    <div class="footertext">
+      <div class="img-preload">
+        <img src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/wordpress-rotating-ball-o.svg">
+        <img src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/disqus-preloader.svg">
+      </div>
+      <p style="color: #666666;">&copy 2023</p>
+    </div>
+    <div class="footer-device">
+    <p style="font-family: 'Ubuntu', sans-serif;">
+        <span style="color: #b9b9b9;">web <a  target="_blank" style="color: #b9b9b9;;text-decoration: underline dotted rgba(0, 0, 0, .1);">Azure-home</a> <i class="iconfont icon-sakura rotating" style="color: #ffc0cb;display:inline-block"></i> by <a  target="_blank" style="color: #b9b9b9;;text-decoration: underline dotted rgba(0, 0, 0, .1);">Dylan</a>
+        </span>
+      </p>
+    </div>
+  </div><!-- .site-info -->
+</footer>
+
+
+
+<!-- <script src="/js/tocbot.js"></script> -->
+<script type="text/javascript" src="/js/lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script type="text/javascript" src="/js/InsightSearch.js"></script>
+<script type="text/javascript" src="/js/jquery.fancybox.min.js"></script>
+<script type="text/javascript" src="/js/zoom.min.js"></script>
+<script type="text/javascript" src="/js/sakura-app.js"></script>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine@1.3.4/dist/Valine.min.js'></script>
+<script src="/js/botui.js"></script>
+<!-- 不蒜子 网页计数器 -->
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script> -->
+<script type="text/javascript">
+/* <![CDATA[ */
+if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+  var Poi = {"pjax":"1","movies":{"url": "https://cdn.jsdelivr.net/gh/honjun/hojun@1.2","name":"Unbroken.mp4","live":"close"},"windowheight":"fixed","codelamp":"close","ajaxurl":"","order":"asc","formpostion":"bottom"};
+} else {
+  var Poi = {"pjax":"1","movies":{"url": "https://cdn.jsdelivr.net/gh/honjun/hojun@1.2","name":"Unbroken.mp4","live":"open"},"windowheight":"auto","codelamp":"close","ajaxurl":"","order":"asc","formpostion":"bottom"};
+}
+/* ]]> */
+
+</script>
+<script>
+$(document).ready(function() {
+  if ($(".toc").length > 0 && document.body.clientWidth > 1200) {
+    if ($(".pattern-center").length > 0) { //有图的情况
+      tocbot.init({
+          // Where to render the table of contents.
+          tocSelector: '.toc', // 放置目录的容器
+          // Where to grab the headings to build the table of contents.
+          contentSelector: '.entry-content', // 正文内容所在
+          // Which headings to grab inside of the contentSelector element.
+          scrollSmooth: true,
+          headingSelector: 'h1, h2, h3, h4, h5', // 需要索引的标题级别
+          headingsOffset: -400,
+          scrollSmoothOffset: -85
+      });
+    } else {
+      tocbot.init({
+          // Where to render the table of contents.
+          tocSelector: '.toc', // 放置目录的容器
+          // Where to grab the headings to build the table of contents.
+          contentSelector: '.entry-content', // 正文内容所在
+          // Which headings to grab inside of the contentSelector element.
+          scrollSmooth: true,
+          headingSelector: 'h1, h2, h3, h4, h5', // 需要索引的标题级别
+          headingsOffset: -85,
+          scrollSmoothOffset: -85
+      });
+    }
+    var offsetTop = $('.toc').offset().top - 95;
+    window.onscroll = function() {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+      if (scrollTop >= offsetTop) {
+        $('.toc').addClass('toc-fixed');
+      } else {
+        $('.toc').removeClass('toc-fixed');
+      }
+    }
+  }
+});
+</script>
+
+    <div class="openNav no-select" style="height: 50px;">
+      <div class="iconflat no-select" style="width: 50px; height: 50px;">
+        <div class="icon"></div>
+      </div>
+      <div class="site-branding search-form-submit">
+        <i class="iconfont js-toggle-search iconsearch icon-search"></i>
+      </div>
+    </div>
+  </section>
+  <div id="mo-nav" class="">
+  <div class="m-avatar">
+    <img src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/mainicon.png">
+  </div>
+  <p style="text-align: center; color: #333; font-weight: 900; font-family: 'Ubuntu', sans-serif; letter-spacing: 1.5px">Azure的小窝</p>
+  <p style="text-align: center; word-spacing: 20px;">
+    
+      
+        <a href="http://github.com/honjun" class="fa fa-github" target="_blank" style="color: #333; margin-left:20px"></a>
+      
+        <a href="http://weibo.com/mashirozx?is_all=1" class="fa fa-weibo" target="_blank" style="color: #dd4b39; margin-left:20px"></a>
+      
+        <a href="https://wpa.qq.com/msgrd?v=3&uin=954655431&site=qq&menu=yes" class="fa fa-qq" target="_blank" style="color: #25c6fe; margin-left:20px"></a>
+      
+    
+  </p>
+  <ul id="menu-new-1" class="menu">
+    
+      <li>
+        <a href="/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-fort-awesome faa-shake" aria-hidden="true"></i>
+            首页
+          </span>
+        </a>
+        
+      </li>
+    
+      <li>
+        <a href="/archives">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-archive faa-shake" aria-hidden="true"></i>
+            归档
+          </span>
+        </a>
+        
+          <ul class="sub-menu">
+            
+              <li>
+                <a href="/categories/%E6%8A%80%E6%9C%AF/">
+                  <i class="fa fa-code" aria-hidden="true"></i>
+                  技术
+                </a>
+              </li>
+            
+              <li>
+                <a href="/categories/%E7%94%9F%E6%B4%BB/">
+                  <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                  生活
+                </a>
+              </li>
+            
+              <li>
+                <a href="/categories/%E8%B5%84%E6%BA%90/">
+                  <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                  资源
+                </a>
+              </li>
+            
+              <li>
+                <a href="/categories/%E9%9A%8F%E6%83%B3/">
+                  <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                  随想
+                </a>
+              </li>
+            
+              <li>
+                <a href="/categories/%E8%BD%AC%E8%BD%BD/">
+                  <i class="fa fa-book" aria-hidden="true"></i>
+                  转载
+                </a>
+              </li>
+            
+              <li>
+                <a href="/categories/%E8%8B%B1%E8%AF%AD">
+                  <i class="fa fa-english" aria-hidden="true"></i>
+                  英语
+                </a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      <li>
+        <a href="javascript:;">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-list-ul faa-vertical" aria-hidden="true"></i>
+            清单
+          </span>
+        </a>
+        
+          <ul class="sub-menu">
+            
+              <li>
+                <a href="/tags/%E6%82%A6%E8%AF%BB/">
+                  <i class="fa fa-th-list faa-bounce" aria-hidden="true"></i>
+                  书单
+                </a>
+              </li>
+            
+              <li>
+                <a href="/bangumi/">
+                  <i class="fa fa-film faa-vertical" aria-hidden="true"></i>
+                  番组
+                </a>
+              </li>
+            
+              <li>
+                <a href="/music/">
+                  <i class="fa fa-headphones" aria-hidden="true"></i>
+                  歌单
+                </a>
+              </li>
+            
+              <li>
+                <a href="/tags/%E5%9B%BE%E9%9B%86/">
+                  <i class="fa fa-photo" aria-hidden="true"></i>
+                  图集
+                </a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      <li>
+        <a href="/comment/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-pencil-square-o faa-tada" aria-hidden="true"></i>
+            留言板
+          </span>
+        </a>
+        
+      </li>
+    
+      <li>
+        <a href="/links/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-link faa-shake" aria-hidden="true"></i>
+            友人帐
+          </span>
+        </a>
+        
+      </li>
+    
+      <li>
+        <a href="/donate/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-heart faa-pulse" aria-hidden="true"></i>
+            赞赏
+          </span>
+        </a>
+        
+      </li>
+    
+      <li>
+        <a href="/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-leaf faa-wrench" aria-hidden="true"></i>
+            关于
+          </span>
+        </a>
+        
+          <ul class="sub-menu">
+            
+              <li>
+                <a href="/about/">
+                  <i class="fa fa-meetup" aria-hidden="true"></i>
+                  我？
+                </a>
+              </li>
+            
+              <li>
+                <a href="/theme-sakura/">
+                  <i class="fa iconfont icon-sakura" aria-hidden="true"></i>
+                  主题
+                </a>
+              </li>
+            
+              <li>
+                <a href="/lab/">
+                  <i class="fa fa-cogs" aria-hidden="true"></i>
+                  Lab
+                </a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      <li>
+        <a href="/client/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-android faa-vertical" aria-hidden="true"></i>
+            客户端
+          </span>
+        </a>
+        
+      </li>
+    
+      <li>
+        <a href="/atom.xml">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-rss faa-pulse" aria-hidden="true"></i>
+            RSS
+          </span>
+        </a>
+        
+      </li>
+    
+  </ul>
+  <p style="text-align: center; font-size: 13px; color: #b9b9b9;">&copy 2019 hexo-sakura</p>
+</div>
+<button onclick="topFunction()" class="mobile-cd-top" id="moblieGoTop" title="Go to top" style="display: none;"><i class="fa fa-chevron-up" aria-hidden="true"></i></button>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+<!-- require MetingJS -->
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+<style>
+  .aplayer .aplayer-lrc {
+    height: 35px;
+  }
+  .aplayer .aplayer-lrc p{
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 18px !important;
+  }
+  .aplayer .aplayer-lrc p.aplayer-lrc-current{
+    color: #FF1493;
+  }
+  .aplayer.aplayer-narrow .aplayer-body{
+    left: -66px !important;
+  }
+  .aplayer.aplayer-fixed .aplayer-lrc {
+    display: none;
+  }
+  .aplayer .aplayer-lrc.aplayer-lrc-hide {
+      display:none !important;
+  }
+  .aplayer.aplayer-fixed .lrc-show {
+    display: block;
+    background: rgba(255, 255, 255, 0.8);
+  }
+</style>
+<meting-js
+
+    id="2660651585"
+
+    server="netease"
+
+    type="playlist"
+
+    fixed="true"
+
+    autoplay="false"
+
+    loop="all"
+
+    order="random"
+
+    preload="auto"
+
+    volume="0.7"
+
+    mutex="true"
+
+</meting-js>
+<script>
+  $(function(){
+    $('body').on('click', '.aplayer', function(){
+      if($('.aplayer-button').hasClass('aplayer-play')) {
+        $('.aplayer-lrc').removeClass('lrc-show');
+      } else {
+        $('.aplayer-lrc').addClass('lrc-show');
+      }
+    })
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  
+  <title itemprop="name">基于C++tcp传输Base64编解码升级版 | Azure&#39;s Home</title>
+  
+    <link rel="shortcut icon" href="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/mainicon.png">
+  
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+SerifMerriweather|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700|Noto+Serif+SC" media="all">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" id="saukra_css-css" href="/css/style.css" type="text/css" media="all">
+  <link rel="stylesheet" href="/css/lib.min.css" media="all">
+  <link rel="stylesheet" href="/css/font.css" media="all">
+  <link rel="stylesheet" href="/css/insight.css" media="all">
+  <link rel="stylesheet" href="/css/jquery.fancybox.min.css" media="all">
+  <link rel="stylesheet" href="/css/zoom.css" media="all">
+  <link rel="stylesheet" type="text/css" href="/css/sharejs.css">
+<!--   <link rel="stylesheet" id="saukra_css-css" href="https://2heng.xin/wp-content/cache/autoptimize/css/autoptimize_ad42a61f4c7d4bdd9f91afcff6b5dda5.css
+" type="text/css" media="all"> -->
+  <script>
+  /*Initial Variables*/
+  var mashiro_option = new Object();
+  var mashiro_global = new Object();
+  mashiro_option.NProgressON = true;
+  /* 
+   * 邮箱信息之类的东西可以填在这里，这些js变量基本都作用于sakura-app.js
+   * 这样的设置仅是为了方便在基于PHP开发的主题中设置js变量，既然移植到了Node上，我想或许可以精简这一逻辑吧
+   */
+  mashiro_option.email_domain = "";
+  mashiro_option.email_name = "";
+  mashiro_option.cookie_version_control = "";
+  mashiro_option.qzone_autocomplete = false;
+  mashiro_option.site_name = "Azure的小窝";
+  mashiro_option.author_name = "的小窝";
+  mashiro_option.site_url = "https://azuresword.github.io/";
+  mashiro_option.v_appId = "GyC3NzMvd0hT9Yyd2hYIC0MN-gzGzoHsz";
+  mashiro_option.v_appKey = "mgOpfzbkHYqU92CV4IDlAUHQ";
+  mashiro_option.mathjax = "1";
+  mashiro_option.qq_api_url = "https://api.mashiro.top/qqinfo/"; 
+  mashiro_option.qq_avatar_api_url = "https://api.mashiro.top/qqinfo/";
+
+  // mashiro_option.jsdelivr_css_src = "https://cdn.jsdelivr.net/gh/moezx/cdn@3.4.5/css/lib.min.css";
+  // mashiro_option.float_player_on = true;
+
+  /*End of Initial Variables*/
+  </script>
+  <script type="text/javascript">
+  var bg = "https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/genshin%20Yae%20miko2.png,https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/genshin%20Yae%20miko.png,https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/sence2.png,https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/scence1.png,https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/genshin%20Yae%20miko1.png".split(",");
+  var bgindex = Math.floor(Math.random()*bg.length);
+  if (!!window.ActiveXObject || "ActiveXObject" in window) { //is IE?
+    alert('朋友，IE浏览器未适配哦~');
+  }
+  </script>
+  <style type="text/css">
+  .hljs-ln{border-collapse:collapse}.hljs-ln td{padding:0}.hljs-ln-n:before{content:attr(data-line-number)}
+  </style>
+  <style type="text/css">.site-top .lower nav{display:block !important;}.author-profile i,.post-like a,.post-share .show-share,.sub-text,.we-info a,span.sitename,.post-more i:hover,#pagination a:hover,.post-content a:hover,.float-content i:hover{color:#FE9600}.feature i,.download,.navigator i:hover,.links ul li:before,.ar-time i,span.ar-circle,.object,.comment .comment-reply-link,.siren-checkbox-radio:checked + .siren-checkbox-radioInput:after{background:#FE9600}::-webkit-scrollbar-thumb{background:#FE9600}.download,.navigator i:hover,.link-title,.links ul li:hover,#pagination a:hover,.comment-respond input[type='submit']:hover{border-color:#FE9600}.entry-content a:hover,.site-info a:hover,.comment h4 a,#comments-navi a.prev,#comments-navi a.next,.comment h4 a:hover,.site-top ul li a:hover,.entry-title a:hover,#archives-temp h3,span.page-numbers.current,.sorry li a:hover,.site-title a:hover,i.iconfont.js-toggle-search.iconsearch:hover,.comment-respond input[type='submit']:hover{color:#FE9600}.comments .comments-main{display:block !important;}.comments .comments-hidden{display:none !important;}background-position:center center;background-attachment:inherit;}
+  </style>
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body class="page-template page-template-user page-template-page-analytics page-template-userpage-analytics-php page page-id-1297 chinese-font serif isWebKit">
+  <div class="scrollbar" id="bar">
+  </div>
+  <a href="#" class="cd-top faa-float animated"></a>
+  <section id="main-container">
+    <div class="headertop filter-dim">
+  <div id="banner_wave_1"></div>
+  <div id="banner_wave_2"></div>
+  <figure id="centerbg" class="centerbg">
+    <div class="focusinfo no-select">
+      <div class="header-tou">
+        <a target="_blank" rel="noopener" href="https://azuresword.github.io/">
+          <img src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/mainicon.png">
+        </a>
+      </div>
+      <div class="header-info">
+        <p>more happy more life Embrace each day with vigor and purpose ！</p>
+        <div class="top-social_v2">
+          <li id="bg-pre">
+            <img class="flipx" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/next-b.svg">
+          </li>
+          
+            
+              
+                <li>
+                  <a href="http://github.com/Azuresword" target="_blank" class="social-github" title="github">
+                    <img src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/github.svg">
+                  </a>
+                </li>
+              
+            
+              
+                <li class="wechat">
+                  <a href="/#">
+                    <img src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/%E5%BE%AE%E4%BF%A1.svg">
+                  </a>
+                  <div class="wechatInner">
+                    <img src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/qrcode.jpg">
+                  </div>
+                </li>
+              
+            
+          
+          <li id="bg-next">
+            <img src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/next-b.svg">
+          </li>
+        </div>
+      </div>
+    </div>
+  </figure>
+  <div id="video-container" style="">
+    <video style="object-fit: fill" id="bgvideo" class="video" video-name="" src="" width="auto" preload="auto">
+    </video>
+    <div id="video-btn" class="loadvideo videolive">
+    </div>
+    <div id="video-add">
+    </div>
+    <div class="video-stu">
+    </div>
+  </div>
+  <div class="headertop-down faa-float animated" onclick="headertop_down()">
+    <span>
+      <i class="fa fa-chevron-down" aria-hidden="true">
+      </i>
+    </span>
+  </div>
+</div>
+    <div id="page" class="site wrapper">
+      <header class="site-header no-select gizle sabit" role="banner">
+  <div class="site-top">
+    <div class="site-branding">
+      <span class="site-title">
+        <span class="logolink moe-mashiro">
+          <a href="/">
+            <span class="sakurasono">Azure</span>
+            <span class="shironeko">的小窝</span>
+          </a>
+        </span>
+      </span>
+    </div>
+    <div class="searchbox search-form-submit">
+      <i class="iconfont js-toggle-search iconsearch icon-search">
+      </i>
+    </div>
+    <div id="show-nav" class="showNav mobile-fit">
+      <div class="line line1">
+      </div>
+      <div class="line line2">
+      </div>
+      <div class="line line3">
+      </div>
+    </div>
+    <div class="lower-cantiner">
+      <div class="lower">
+        <nav class="mobile-fit-control hide">
+          <ul id="menu-new" class="menu">
+            
+              <li>
+                <a href="/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-fort-awesome faa-shake" aria-hidden="true"></i>
+                    首页
+                  </span>
+                </a>
+                
+              </li>
+            
+              <li>
+                <a href="/archives">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-archive faa-shake" aria-hidden="true"></i>
+                    归档
+                  </span>
+                </a>
+                
+                  <ul class="sub-menu">
+                    
+                      <li>
+                        <a href="/categories/%E6%8A%80%E6%9C%AF/">
+                          <i class="fa fa-code" aria-hidden="true"></i>
+                          技术
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/categories/%E7%94%9F%E6%B4%BB/">
+                          <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                          生活
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/categories/%E8%B5%84%E6%BA%90/">
+                          <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                          资源
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/categories/%E9%9A%8F%E6%83%B3/">
+                          <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                          随想
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/categories/%E8%BD%AC%E8%BD%BD/">
+                          <i class="fa fa-book" aria-hidden="true"></i>
+                          转载
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/categories/%E8%8B%B1%E8%AF%AD">
+                          <i class="fa fa-english" aria-hidden="true"></i>
+                          英语
+                        </a>
+                      </li>
+                    
+                  </ul>
+                
+              </li>
+            
+              <li>
+                <a href="javascript:;">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-list-ul faa-vertical" aria-hidden="true"></i>
+                    清单
+                  </span>
+                </a>
+                
+                  <ul class="sub-menu">
+                    
+                      <li>
+                        <a href="/tags/%E6%82%A6%E8%AF%BB/">
+                          <i class="fa fa-th-list faa-bounce" aria-hidden="true"></i>
+                          书单
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/bangumi/">
+                          <i class="fa fa-film faa-vertical" aria-hidden="true"></i>
+                          番组
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/music/">
+                          <i class="fa fa-headphones" aria-hidden="true"></i>
+                          歌单
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/tags/%E5%9B%BE%E9%9B%86/">
+                          <i class="fa fa-photo" aria-hidden="true"></i>
+                          图集
+                        </a>
+                      </li>
+                    
+                  </ul>
+                
+              </li>
+            
+              <li>
+                <a href="/comment/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-pencil-square-o faa-tada" aria-hidden="true"></i>
+                    留言板
+                  </span>
+                </a>
+                
+              </li>
+            
+              <li>
+                <a href="/links/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-link faa-shake" aria-hidden="true"></i>
+                    友人帐
+                  </span>
+                </a>
+                
+              </li>
+            
+              <li>
+                <a href="/donate/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-heart faa-pulse" aria-hidden="true"></i>
+                    赞赏
+                  </span>
+                </a>
+                
+              </li>
+            
+              <li>
+                <a href="/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-leaf faa-wrench" aria-hidden="true"></i>
+                    关于
+                  </span>
+                </a>
+                
+                  <ul class="sub-menu">
+                    
+                      <li>
+                        <a href="/about/">
+                          <i class="fa fa-meetup" aria-hidden="true"></i>
+                          我？
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/theme-sakura/">
+                          <i class="fa iconfont icon-sakura" aria-hidden="true"></i>
+                          主题
+                        </a>
+                      </li>
+                    
+                      <li>
+                        <a href="/lab/">
+                          <i class="fa fa-cogs" aria-hidden="true"></i>
+                          Lab
+                        </a>
+                      </li>
+                    
+                  </ul>
+                
+              </li>
+            
+              <li>
+                <a href="/client/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-android faa-vertical" aria-hidden="true"></i>
+                    客户端
+                  </span>
+                </a>
+                
+              </li>
+            
+              <li>
+                <a href="/atom.xml">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-rss faa-pulse" aria-hidden="true"></i>
+                    RSS
+                  </span>
+                </a>
+                
+              </li>
+            
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <link rel="stylesheet" type="text/css" href="/css/sharejs.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css">
+<div class="pattern-center-blank"></div>
+
+<div id="content" class="site-content">
+  <div id="primary" class="content-area">
+    <main id="main" class="site-main" role="main">
+      <article id="post-1" class="post-1 post type-post status-publish format-standard has-post-thumbnail hentry category-uncategorized">
+        <div class="toc"></div>
+        <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
+        
+          <header class="entry-header">
+            <h1 class="entry-title">基于C++tcp传输Base64编解码升级版</h1>
+            <p class="entry-census">&nbsp;·&nbsp;2023-12-29&nbsp;·&nbsp;<span id="busuanzi_value_page_pv"></span>次阅读</p></p>
+
+            <hr>
+          </header>
+        
+        <div class="entry-content">
+          <h2 id="服务端程序"><a href="#服务端程序" class="headerlink" title="服务端程序"></a>服务端程序</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;winsock2.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> comment(lib, <span class="string">&quot;ws2_32.lib&quot;</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> std::string base64_chars =</span><br><span class="line">        <span class="string">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span></span><br><span class="line">        <span class="string">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span></span><br><span class="line">        <span class="string">&quot;0123456789+/&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 检查字符是否属于Base64编码字符集</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">bool</span> <span class="title">is_base64</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> c)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="built_in">isalnum</span>(c) || (c == <span class="string">&#x27;+&#x27;</span>) || (c == <span class="string">&#x27;/&#x27;</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 清理Base64字符串，移除非Base64字符</span></span><br><span class="line"><span class="function">std::string <span class="title">cleanBase64String</span><span class="params">(<span class="type">const</span> std::string&amp; input)</span> </span>&#123;</span><br><span class="line">    std::string output;</span><br><span class="line">    output.<span class="built_in">reserve</span>(input.<span class="built_in">size</span>());</span><br><span class="line"></span><br><span class="line">    std::<span class="built_in">copy_if</span>(input.<span class="built_in">begin</span>(), input.<span class="built_in">end</span>(), std::<span class="built_in">back_inserter</span>(output), is_base64);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> output;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Base64解码函数</span></span><br><span class="line"><span class="function">std::string <span class="title">base64_decode</span><span class="params">(std::string <span class="type">const</span>&amp; encoded_string)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> in_len = encoded_string.<span class="built_in">size</span>();</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> j = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> in_ = <span class="number">0</span>;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span> char_array_4[<span class="number">4</span>], char_array_3[<span class="number">3</span>];</span><br><span class="line">    std::string ret;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (in_len-- &amp;&amp; (encoded_string[in_] != <span class="string">&#x27;=&#x27;</span>) &amp;&amp; <span class="built_in">is_base64</span>(encoded_string[in_])) &#123;</span><br><span class="line">        char_array_4[i++] = encoded_string[in_]; in_++;</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">4</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++)</span><br><span class="line">                char_array_4[i] = base64_chars.<span class="built_in">find</span>(char_array_4[i]);</span><br><span class="line"></span><br><span class="line">            char_array_3[<span class="number">0</span>] = (char_array_4[<span class="number">0</span>] &lt;&lt; <span class="number">2</span>) + ((char_array_4[<span class="number">1</span>] &amp; <span class="number">0x30</span>) &gt;&gt; <span class="number">4</span>);</span><br><span class="line">            char_array_3[<span class="number">1</span>] = ((char_array_4[<span class="number">1</span>] &amp; <span class="number">0xf</span>) &lt;&lt; <span class="number">4</span>) + ((char_array_4[<span class="number">2</span>] &amp; <span class="number">0x3c</span>) &gt;&gt; <span class="number">2</span>);</span><br><span class="line">            char_array_3[<span class="number">2</span>] = ((char_array_4[<span class="number">2</span>] &amp; <span class="number">0x3</span>) &lt;&lt; <span class="number">6</span>) + char_array_4[<span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (i = <span class="number">0</span>; (i &lt; <span class="number">3</span>); i++)</span><br><span class="line">                ret += char_array_3[i];</span><br><span class="line">            i = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (i) &#123;</span><br><span class="line">        <span class="keyword">for</span> (j = i; j &lt; <span class="number">4</span>; j++)</span><br><span class="line">            char_array_4[j] = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; <span class="number">4</span>; j++)</span><br><span class="line">            char_array_4[j] = base64_chars.<span class="built_in">find</span>(char_array_4[j]);</span><br><span class="line"></span><br><span class="line">        char_array_3[<span class="number">0</span>] = (char_array_4[<span class="number">0</span>] &lt;&lt; <span class="number">2</span>) + ((char_array_4[<span class="number">1</span>] &amp; <span class="number">0x30</span>) &gt;&gt; <span class="number">4</span>);</span><br><span class="line">        char_array_3[<span class="number">1</span>] = ((char_array_4[<span class="number">1</span>] &amp; <span class="number">0xf</span>) &lt;&lt; <span class="number">4</span>) + ((char_array_4[<span class="number">2</span>] &amp; <span class="number">0x3c</span>) &gt;&gt; <span class="number">2</span>);</span><br><span class="line">        char_array_3[<span class="number">2</span>] = ((char_array_4[<span class="number">2</span>] &amp; <span class="number">0x3</span>) &lt;&lt; <span class="number">6</span>) + char_array_4[<span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">0</span>; (j &lt; i - <span class="number">1</span>); j++) ret += char_array_3[j];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    WSADATA wsaData;</span><br><span class="line">    SOCKET serverSocket, clientSocket;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> server, client;</span><br><span class="line">    <span class="type">char</span> buffer[<span class="number">1024</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="type">int</span> clientSize = <span class="built_in">sizeof</span>(client);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">WSAStartup</span>(<span class="built_in">MAKEWORD</span>(<span class="number">2</span>,<span class="number">2</span>), &amp;wsaData) != <span class="number">0</span>) &#123;</span><br><span class="line">        std::cerr &lt;&lt; <span class="string">&quot;Winsock initialization failed. Error code: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((serverSocket = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>)) == INVALID_SOCKET) &#123;</span><br><span class="line">        std::cerr &lt;&lt; <span class="string">&quot;Socket creation failed. Error code: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; std::endl;</span><br><span class="line">        <span class="built_in">WSACleanup</span>();</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    server.sin_family = AF_INET;</span><br><span class="line">    server.sin_addr.s_addr = <span class="built_in">inet_addr</span>(<span class="string">&quot;192.168.50.218&quot;</span>); <span class="comment">// Specific IP address</span></span><br><span class="line">    server.sin_port = <span class="built_in">htons</span>(<span class="number">8888</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">bind</span>(serverSocket, (<span class="keyword">struct</span> sockaddr *)&amp;server, <span class="built_in">sizeof</span>(server)) == SOCKET_ERROR) &#123;</span><br><span class="line">        std::cerr &lt;&lt; <span class="string">&quot;Bind failed. Error code: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; std::endl;</span><br><span class="line">        <span class="built_in">closesocket</span>(serverSocket);</span><br><span class="line">        <span class="built_in">WSACleanup</span>();</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">listen</span>(serverSocket, <span class="number">3</span>);</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Waiting for incoming connections...&quot;</span> &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;  <span class="comment">// Main loop to accept new connections</span></span><br><span class="line">        clientSocket = <span class="built_in">accept</span>(serverSocket, (<span class="keyword">struct</span> sockaddr *)&amp;client, &amp;clientSize);</span><br><span class="line">        <span class="keyword">if</span> (clientSocket == INVALID_SOCKET) &#123;</span><br><span class="line">            std::cerr &lt;&lt; <span class="string">&quot;Accepting connection failed. Error code: &quot;</span> &lt;&lt; <span class="built_in">WSAGetLastError</span>() &lt;&lt; std::endl;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Connection established!&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        std::stringstream ss;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;  <span class="comment">// Loop for handling multiple data transfers within the same connection</span></span><br><span class="line">            <span class="built_in">memset</span>(buffer, <span class="number">0</span>, <span class="number">1024</span>);</span><br><span class="line">            <span class="type">int</span> bytesReceived = <span class="built_in">recv</span>(clientSocket, buffer, <span class="number">1024</span>, <span class="number">0</span>);</span><br><span class="line">            <span class="keyword">if</span> (bytesReceived == SOCKET_ERROR || bytesReceived == <span class="number">0</span>) &#123;</span><br><span class="line">                std::cerr &lt;&lt; <span class="string">&quot;Client disconnected&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            ss &lt;&lt; buffer;</span><br><span class="line">            <span class="keyword">if</span> (ss.<span class="built_in">str</span>().<span class="built_in">find</span>(<span class="string">&quot;END&quot;</span>) != std::string::npos) &#123;</span><br><span class="line">                std::string encoded_str = ss.<span class="built_in">str</span>();</span><br><span class="line">                <span class="type">size_t</span> end_pos = encoded_str.<span class="built_in">find</span>(<span class="string">&quot;END&quot;</span>);</span><br><span class="line">                encoded_str = encoded_str.<span class="built_in">substr</span>(<span class="number">0</span>, end_pos);</span><br><span class="line"></span><br><span class="line">                std::string clean_encoded_str = <span class="built_in">cleanBase64String</span>(encoded_str);</span><br><span class="line">                std::string decoded_data = <span class="built_in">base64_decode</span>(clean_encoded_str);</span><br><span class="line"></span><br><span class="line">                <span class="function">std::ofstream <span class="title">output_file</span><span class="params">(<span class="string">&quot;output.jpg&quot;</span>, std::ios::binary)</span></span>;</span><br><span class="line">                <span class="keyword">if</span> (output_file.<span class="built_in">is_open</span>()) &#123;</span><br><span class="line">                    output_file.<span class="built_in">write</span>(decoded_data.<span class="built_in">c_str</span>(), decoded_data.<span class="built_in">size</span>());</span><br><span class="line">                    output_file.<span class="built_in">close</span>();</span><br><span class="line">                    std::cout &lt;&lt; <span class="string">&quot;Decoded image written to output.jpg&quot;</span> &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">                    <span class="built_in">send</span>(clientSocket, <span class="string">&quot;START&quot;</span>, <span class="number">5</span>, <span class="number">0</span>);</span><br><span class="line">                    ss.<span class="built_in">clear</span>();</span><br><span class="line">                    ss.<span class="built_in">str</span>(<span class="string">&quot;&quot;</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    std::cerr &lt;&lt; <span class="string">&quot;Failed to open output file.&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">closesocket</span>(clientSocket);  <span class="comment">// Close the client socket</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">closesocket</span>(serverSocket);</span><br><span class="line">    <span class="built_in">WSACleanup</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="客户端程序"><a href="#客户端程序" class="headerlink" title="客户端程序"></a>客户端程序</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sstream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> std::string base64_chars =</span><br><span class="line">        <span class="string">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span></span><br><span class="line">        <span class="string">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span></span><br><span class="line">        <span class="string">&quot;0123456789+/&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function">std::string <span class="title">base64_encode</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> <span class="type">const</span>* bytes_to_encode, <span class="type">unsigned</span> <span class="type">int</span> in_len)</span> </span>&#123;</span><br><span class="line">    std::string ret;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> j = <span class="number">0</span>;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span> char_array_3[<span class="number">3</span>];</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span> char_array_4[<span class="number">4</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (in_len--) &#123;</span><br><span class="line">        char_array_3[i++] = *(bytes_to_encode++);</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">3</span>) &#123;</span><br><span class="line">            char_array_4[<span class="number">0</span>] = (char_array_3[<span class="number">0</span>] &amp; <span class="number">0xfc</span>) &gt;&gt; <span class="number">2</span>;</span><br><span class="line">            char_array_4[<span class="number">1</span>] = ((char_array_3[<span class="number">0</span>] &amp; <span class="number">0x03</span>) &lt;&lt; <span class="number">4</span>) + ((char_array_3[<span class="number">1</span>] &amp; <span class="number">0xf0</span>) &gt;&gt; <span class="number">4</span>);</span><br><span class="line">            char_array_4[<span class="number">2</span>] = ((char_array_3[<span class="number">1</span>] &amp; <span class="number">0x0f</span>) &lt;&lt; <span class="number">2</span>) + ((char_array_3[<span class="number">2</span>] &amp; <span class="number">0xc0</span>) &gt;&gt; <span class="number">6</span>);</span><br><span class="line">            char_array_4[<span class="number">3</span>] = char_array_3[<span class="number">2</span>] &amp; <span class="number">0x3f</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span>(i = <span class="number">0</span>; (i &lt;<span class="number">4</span>) ; i++)</span><br><span class="line">                ret += base64_chars[char_array_4[i]];</span><br><span class="line">            i = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span>(j = i; j &lt; <span class="number">3</span>; j++)</span><br><span class="line">            char_array_3[j] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line"></span><br><span class="line">        char_array_4[<span class="number">0</span>] = (char_array_3[<span class="number">0</span>] &amp; <span class="number">0xfc</span>) &gt;&gt; <span class="number">2</span>;</span><br><span class="line">        char_array_4[<span class="number">1</span>] = ((char_array_3[<span class="number">0</span>] &amp; <span class="number">0x03</span>) &lt;&lt; <span class="number">4</span>) + ((char_array_3[<span class="number">1</span>] &amp; <span class="number">0xf0</span>) &gt;&gt; <span class="number">4</span>);</span><br><span class="line">        char_array_4[<span class="number">2</span>] = ((char_array_3[<span class="number">1</span>] &amp; <span class="number">0x0f</span>) &lt;&lt; <span class="number">2</span>) + ((char_array_3[<span class="number">2</span>] &amp; <span class="number">0xc0</span>) &gt;&gt; <span class="number">6</span>);</span><br><span class="line">        char_array_4[<span class="number">3</span>] = char_array_3[<span class="number">2</span>] &amp; <span class="number">0x3f</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">0</span>; (j &lt; i + <span class="number">1</span>); j++)</span><br><span class="line">            ret += base64_chars[char_array_4[j]];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>((i++ &lt; <span class="number">3</span>))</span><br><span class="line">            ret += <span class="string">&#x27;=&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> sock;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> server;</span><br><span class="line">    <span class="type">bool</span> transferCompleted = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (!transferCompleted) &#123;</span><br><span class="line">        <span class="comment">// 创建套接字</span></span><br><span class="line">        sock = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">if</span> (sock == <span class="number">-1</span>) &#123;</span><br><span class="line">            std::cerr &lt;&lt; <span class="string">&quot;Could not create socket&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        server.sin_addr.s_addr = <span class="built_in">inet_addr</span>(<span class="string">&quot;192.168.50.218&quot;</span>);</span><br><span class="line">        server.sin_family = AF_INET;</span><br><span class="line">        server.sin_port = <span class="built_in">htons</span>(<span class="number">8888</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 连接到服务器</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">connect</span>(sock, (<span class="keyword">struct</span> sockaddr *)&amp;server, <span class="built_in">sizeof</span>(server)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            std::cerr &lt;&lt; <span class="string">&quot;Connect failed. Error&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            <span class="built_in">close</span>(sock);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Connected to server&quot;</span> &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 读取和发送图像文件</span></span><br><span class="line">        <span class="function">std::ifstream <span class="title">file</span><span class="params">(<span class="string">&quot;./image0.jpg&quot;</span>, std::ios::binary)</span></span>;</span><br><span class="line">        <span class="keyword">if</span> (!file.<span class="built_in">is_open</span>()) &#123;</span><br><span class="line">            std::cerr &lt;&lt; <span class="string">&quot;Failed to open file.&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            <span class="built_in">close</span>(sock);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function">std::vector&lt;<span class="type">unsigned</span> <span class="type">char</span>&gt; <span class="title">buffer</span><span class="params">(std::istreambuf_iterator&lt;<span class="type">char</span>&gt;(file), &#123;&#125;)</span></span>;</span><br><span class="line">        std::string encoded = <span class="built_in">base64_encode</span>(&amp;buffer[<span class="number">0</span>], buffer.<span class="built_in">size</span>());</span><br><span class="line"></span><br><span class="line">        <span class="built_in">send</span>(sock, encoded.<span class="built_in">c_str</span>(), encoded.<span class="built_in">length</span>(), <span class="number">0</span>);</span><br><span class="line">        <span class="built_in">send</span>(sock, <span class="string">&quot;END&quot;</span>, <span class="number">3</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 接收来自服务器的响应</span></span><br><span class="line">        <span class="type">char</span> response[<span class="number">1024</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">        std::stringstream ss;</span><br><span class="line">        <span class="type">int</span> bytesReceived = <span class="built_in">recv</span>(sock, response, <span class="number">1024</span>, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">if</span> (bytesReceived &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            std::cerr &lt;&lt; <span class="string">&quot;Receive failed or connection closed&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">            <span class="built_in">close</span>(sock);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ss &lt;&lt; response;</span><br><span class="line">        <span class="keyword">if</span> (ss.<span class="built_in">str</span>().<span class="built_in">find</span>(<span class="string">&quot;START&quot;</span>) == std::string::npos) &#123;</span><br><span class="line">            transferCompleted = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">close</span>(sock); <span class="comment">// 关闭当前套接字</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<img src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/icon2_round.png" style="zoom: 33%;" />
+
+        </div>
+        <!-- .entry-content -->
+        <div class="single-reward">
+          <div class="reward-open">赏
+            <div class="reward-main">
+              <ul class="reward-row">
+                <li class="alipay-code"><img src="/img/custom/donate/AliPayQR.jpg"></li>
+                <li class="wechat-code"><img src="/img/custom/donate/WeChanQR.jpg"></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; width: 100%" class="social-share share-mobile" data-disabled="diandian, tencent"></div>
+        <footer class="post-footer">
+          <div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> 知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a></div>
+          <div class="post-tags">
+          </div>
+          <div class="post-share">
+            <div class="social-share sharehidden share-component"></div>
+            <i class="iconfont show-share icon-forward"></i>
+          </div>
+        </footer><!-- .entry-footer -->
+      </article>
+      <!-- #post-## -->
+      <div class="toc" style="background: none;"></div>
+      <section class="post-squares nextprev">
+        
+          
+            <div class="post-nepre half previous">
+          
+            <a href="/2023/12/29/%E6%AF%8F%E6%97%A5%E5%8D%95%E8%AF%8D04/" rel="prev">
+              <div class="background">
+                <img class="lazyload" src="" data-src="" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="">
+              </div>
+              <span class="label">
+              Previous Post</span>
+              <div class="info">
+                <h3>
+                每日单词04</h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
+        
+          
+            <div class="post-nepre half next">
+          
+            <a href="/2023/12/29/%E5%9F%BA%E4%BA%8EC-%E7%9A%84TCP%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%BC%A0%E8%BE%93BASE64%E7%BC%96%E7%A0%81%E7%9A%84%E5%9B%BE%E5%83%8F/" rel="next">
+              <div class="background">
+                <img class="lazyload" src="" data-src="" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="">
+              </div>
+              <span class="label">
+              Next Post</span>
+              <div class="info">
+                <h3>
+                基于C++的TCP通信方式传输BASE64编码的图像</h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
+      </section>
+      
+<div id="vcomments"></div>
+<script>
+  window.onload = function(){
+      var valine = new Valine();
+      valine.init({
+        el: '#vcomments',
+        appId: "GyC3NzMvd0hT9Yyd2hYIC0MN-gzGzoHsz",
+        appKey: "mgOpfzbkHYqU92CV4IDlAUHQ",
+        path: window.location.pathname,
+        placeholder: "你是我一生只会遇见一次的惊喜 ..."
+      })
+  }
+</script>
+
+
+
+
+      <section class="author-profile">
+        <div class="info" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
+          <a href="" class="profile gravatar"><img src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/mainicon.png" itemprop="image" alt="" height="70" width="70"></a>
+          <div class="meta">
+            <span class="title">Author</span>
+            <h3 itemprop="name">
+            <a href="" itemprop="url" rel="author"></a>
+            </h3>
+          </div>
+        </div>
+        <hr>
+        <p><i class="iconfont icon-write"></i></p>
+      </section>
+    </main><!-- #main -->
+  </div><!-- #primary -->
+</div>
+
+
+
+    </div>    
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..."/>
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            // PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+    <!-- <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2024 Dylan<br>
+      powered_by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer> -->
+<footer id="colophon" class="site-footer" role="contentinfo">
+  <div class="site-info">
+    <div class="footertext">
+      <div class="img-preload">
+        <img src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/wordpress-rotating-ball-o.svg">
+        <img src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/disqus-preloader.svg">
+      </div>
+      <p style="color: #666666;">&copy 2023</p>
+    </div>
+    <div class="footer-device">
+    <p style="font-family: 'Ubuntu', sans-serif;">
+        <span style="color: #b9b9b9;">web <a  target="_blank" style="color: #b9b9b9;;text-decoration: underline dotted rgba(0, 0, 0, .1);">Azure-home</a> <i class="iconfont icon-sakura rotating" style="color: #ffc0cb;display:inline-block"></i> by <a  target="_blank" style="color: #b9b9b9;;text-decoration: underline dotted rgba(0, 0, 0, .1);">Dylan</a>
+        </span>
+      </p>
+    </div>
+  </div><!-- .site-info -->
+</footer>
+
+
+
+<!-- <script src="/js/tocbot.js"></script> -->
+<script type="text/javascript" src="/js/lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script type="text/javascript" src="/js/InsightSearch.js"></script>
+<script type="text/javascript" src="/js/jquery.fancybox.min.js"></script>
+<script type="text/javascript" src="/js/zoom.min.js"></script>
+<script type="text/javascript" src="/js/sakura-app.js"></script>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine@1.3.4/dist/Valine.min.js'></script>
+<script src="/js/botui.js"></script>
+<!-- 不蒜子 网页计数器 -->
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script> -->
+<script type="text/javascript">
+/* <![CDATA[ */
+if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+  var Poi = {"pjax":"1","movies":{"url": "https://cdn.jsdelivr.net/gh/honjun/hojun@1.2","name":"Unbroken.mp4","live":"close"},"windowheight":"fixed","codelamp":"close","ajaxurl":"","order":"asc","formpostion":"bottom"};
+} else {
+  var Poi = {"pjax":"1","movies":{"url": "https://cdn.jsdelivr.net/gh/honjun/hojun@1.2","name":"Unbroken.mp4","live":"open"},"windowheight":"auto","codelamp":"close","ajaxurl":"","order":"asc","formpostion":"bottom"};
+}
+/* ]]> */
+
+</script>
+<script>
+$(document).ready(function() {
+  if ($(".toc").length > 0 && document.body.clientWidth > 1200) {
+    if ($(".pattern-center").length > 0) { //有图的情况
+      tocbot.init({
+          // Where to render the table of contents.
+          tocSelector: '.toc', // 放置目录的容器
+          // Where to grab the headings to build the table of contents.
+          contentSelector: '.entry-content', // 正文内容所在
+          // Which headings to grab inside of the contentSelector element.
+          scrollSmooth: true,
+          headingSelector: 'h1, h2, h3, h4, h5', // 需要索引的标题级别
+          headingsOffset: -400,
+          scrollSmoothOffset: -85
+      });
+    } else {
+      tocbot.init({
+          // Where to render the table of contents.
+          tocSelector: '.toc', // 放置目录的容器
+          // Where to grab the headings to build the table of contents.
+          contentSelector: '.entry-content', // 正文内容所在
+          // Which headings to grab inside of the contentSelector element.
+          scrollSmooth: true,
+          headingSelector: 'h1, h2, h3, h4, h5', // 需要索引的标题级别
+          headingsOffset: -85,
+          scrollSmoothOffset: -85
+      });
+    }
+    var offsetTop = $('.toc').offset().top - 95;
+    window.onscroll = function() {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+      if (scrollTop >= offsetTop) {
+        $('.toc').addClass('toc-fixed');
+      } else {
+        $('.toc').removeClass('toc-fixed');
+      }
+    }
+  }
+});
+</script>
+
+    <div class="openNav no-select" style="height: 50px;">
+      <div class="iconflat no-select" style="width: 50px; height: 50px;">
+        <div class="icon"></div>
+      </div>
+      <div class="site-branding search-form-submit">
+        <i class="iconfont js-toggle-search iconsearch icon-search"></i>
+      </div>
+    </div>
+  </section>
+  <div id="mo-nav" class="">
+  <div class="m-avatar">
+    <img src="https://azure-home.oss-cn-shenzhen.aliyuncs.com/img/mainicon.png">
+  </div>
+  <p style="text-align: center; color: #333; font-weight: 900; font-family: 'Ubuntu', sans-serif; letter-spacing: 1.5px">Azure的小窝</p>
+  <p style="text-align: center; word-spacing: 20px;">
+    
+      
+        <a href="http://github.com/honjun" class="fa fa-github" target="_blank" style="color: #333; margin-left:20px"></a>
+      
+        <a href="http://weibo.com/mashirozx?is_all=1" class="fa fa-weibo" target="_blank" style="color: #dd4b39; margin-left:20px"></a>
+      
+        <a href="https://wpa.qq.com/msgrd?v=3&uin=954655431&site=qq&menu=yes" class="fa fa-qq" target="_blank" style="color: #25c6fe; margin-left:20px"></a>
+      
+    
+  </p>
+  <ul id="menu-new-1" class="menu">
+    
+      <li>
+        <a href="/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-fort-awesome faa-shake" aria-hidden="true"></i>
+            首页
+          </span>
+        </a>
+        
+      </li>
+    
+      <li>
+        <a href="/archives">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-archive faa-shake" aria-hidden="true"></i>
+            归档
+          </span>
+        </a>
+        
+          <ul class="sub-menu">
+            
+              <li>
+                <a href="/categories/%E6%8A%80%E6%9C%AF/">
+                  <i class="fa fa-code" aria-hidden="true"></i>
+                  技术
+                </a>
+              </li>
+            
+              <li>
+                <a href="/categories/%E7%94%9F%E6%B4%BB/">
+                  <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                  生活
+                </a>
+              </li>
+            
+              <li>
+                <a href="/categories/%E8%B5%84%E6%BA%90/">
+                  <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                  资源
+                </a>
+              </li>
+            
+              <li>
+                <a href="/categories/%E9%9A%8F%E6%83%B3/">
+                  <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                  随想
+                </a>
+              </li>
+            
+              <li>
+                <a href="/categories/%E8%BD%AC%E8%BD%BD/">
+                  <i class="fa fa-book" aria-hidden="true"></i>
+                  转载
+                </a>
+              </li>
+            
+              <li>
+                <a href="/categories/%E8%8B%B1%E8%AF%AD">
+                  <i class="fa fa-english" aria-hidden="true"></i>
+                  英语
+                </a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      <li>
+        <a href="javascript:;">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-list-ul faa-vertical" aria-hidden="true"></i>
+            清单
+          </span>
+        </a>
+        
+          <ul class="sub-menu">
+            
+              <li>
+                <a href="/tags/%E6%82%A6%E8%AF%BB/">
+                  <i class="fa fa-th-list faa-bounce" aria-hidden="true"></i>
+                  书单
+                </a>
+              </li>
+            
+              <li>
+                <a href="/bangumi/">
+                  <i class="fa fa-film faa-vertical" aria-hidden="true"></i>
+                  番组
+                </a>
+              </li>
+            
+              <li>
+                <a href="/music/">
+                  <i class="fa fa-headphones" aria-hidden="true"></i>
+                  歌单
+                </a>
+              </li>
+            
+              <li>
+                <a href="/tags/%E5%9B%BE%E9%9B%86/">
+                  <i class="fa fa-photo" aria-hidden="true"></i>
+                  图集
+                </a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      <li>
+        <a href="/comment/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-pencil-square-o faa-tada" aria-hidden="true"></i>
+            留言板
+          </span>
+        </a>
+        
+      </li>
+    
+      <li>
+        <a href="/links/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-link faa-shake" aria-hidden="true"></i>
+            友人帐
+          </span>
+        </a>
+        
+      </li>
+    
+      <li>
+        <a href="/donate/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-heart faa-pulse" aria-hidden="true"></i>
+            赞赏
+          </span>
+        </a>
+        
+      </li>
+    
+      <li>
+        <a href="/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-leaf faa-wrench" aria-hidden="true"></i>
+            关于
+          </span>
+        </a>
+        
+          <ul class="sub-menu">
+            
+              <li>
+                <a href="/about/">
+                  <i class="fa fa-meetup" aria-hidden="true"></i>
+                  我？
+                </a>
+              </li>
+            
+              <li>
+                <a href="/theme-sakura/">
+                  <i class="fa iconfont icon-sakura" aria-hidden="true"></i>
+                  主题
+                </a>
+              </li>
+            
+              <li>
+                <a href="/lab/">
+                  <i class="fa fa-cogs" aria-hidden="true"></i>
+                  Lab
+                </a>
+              </li>
+            
+          </ul>
+        
+      </li>
+    
+      <li>
+        <a href="/client/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-android faa-vertical" aria-hidden="true"></i>
+            客户端
+          </span>
+        </a>
+        
+      </li>
+    
+      <li>
+        <a href="/atom.xml">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-rss faa-pulse" aria-hidden="true"></i>
+            RSS
+          </span>
+        </a>
+        
+      </li>
+    
+  </ul>
+  <p style="text-align: center; font-size: 13px; color: #b9b9b9;">&copy 2019 hexo-sakura</p>
+</div>
+<button onclick="topFunction()" class="mobile-cd-top" id="moblieGoTop" title="Go to top" style="display: none;"><i class="fa fa-chevron-up" aria-hidden="true"></i></button>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+<!-- require MetingJS -->
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+<style>
+  .aplayer .aplayer-lrc {
+    height: 35px;
+  }
+  .aplayer .aplayer-lrc p{
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 18px !important;
+  }
+  .aplayer .aplayer-lrc p.aplayer-lrc-current{
+    color: #FF1493;
+  }
+  .aplayer.aplayer-narrow .aplayer-body{
+    left: -66px !important;
+  }
+  .aplayer.aplayer-fixed .aplayer-lrc {
+    display: none;
+  }
+  .aplayer .aplayer-lrc.aplayer-lrc-hide {
+      display:none !important;
+  }
+  .aplayer.aplayer-fixed .lrc-show {
+    display: block;
+    background: rgba(255, 255, 255, 0.8);
+  }
+</style>
+<meting-js
+
+    id="2660651585"
+
+    server="netease"
+
+    type="playlist"
+
+    fixed="true"
+
+    autoplay="false"
+
+    loop="all"
+
+    order="random"
+
+    preload="auto"
+
+    volume="0.7"
+
+    mutex="true"
+
+</meting-js>
+<script>
+  $(function(){
+    $('body').on('click', '.aplayer', function(){
+      if($('.aplayer-button').hasClass('aplayer-play')) {
+        $('.aplayer-lrc').removeClass('lrc-show');
+      } else {
+        $('.aplayer-lrc').addClass('lrc-show');
+      }
+    })
+  });
+</script>
+</body>
+</html>
